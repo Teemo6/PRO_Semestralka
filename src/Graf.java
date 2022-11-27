@@ -82,9 +82,7 @@ public class Graf {
      */
     public void vypisOutSousedy() {
         for (Map.Entry<Integer, LinkedList<Integer>> id : outSousedi.entrySet()) {
-            System.out.println("Vrchol (" + id.getKey() + "):");
-
-            System.out.print("\t" + id.getKey());
+            System.out.print(id.getKey());
             for (Integer id2 : outSousedi.get(id.getKey())) {
                 System.out.print(" -> " + id2);
             }
@@ -95,7 +93,7 @@ public class Graf {
     /**
      * Vypíše graf do konzole
      * <p>
-     * Formát výpisu: 'koncový vrchol' <- 'výchozí vrchol' <- 'výchozí vrchol' <- ...
+     * Formát výpisu: 'koncový vrchol' &lt;- 'výchozí vrchol' &lt;- 'výchozí vrchol' &lt;- ...
      */
     public void vypisInSousedy() {
         for (Map.Entry<Integer, LinkedList<Integer>> id : inSousedi.entrySet()) {
