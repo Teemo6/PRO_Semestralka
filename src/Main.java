@@ -25,7 +25,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // Příprava grafů
-        vytvorStejnyNahodnyGraf(5, 5);
+        vytvorStejnyNahodnyGraf(10, 20);
         StrongConnectivityAlgorithm<Integer, DefaultEdge> inspector = new KosarajuStrongConnectivityInspector<>(grafKnihovna);
 
         // Měření času algoritmů
@@ -40,7 +40,7 @@ public class Main {
 
         // Výpis grafu
         System.out.println("Hrany grafu:");
-        grafMuj.vypisGraf();
+        grafMuj.vypisOutSousedy();
         System.out.println();
         System.out.println();
 

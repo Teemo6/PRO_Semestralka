@@ -2,16 +2,20 @@ import java.util.*;
 
 /**
  * Třída reprezentující orientovaný graf
+ * <p>
+ * Graf je reprezentován jako dva spojové seznamy, OUT-sousedé a IN-sousedé
  * @author Štěpán Faragula, 27-11-2022
  */
 public class Graf {
-    /** Reprezentace grafu jako spojový seznam */
-    private final Map<Integer, LinkedList<Integer>> seznamSousednosti;
+    /** OUT-sousedé vrcholu */
+    private final Map<Integer, LinkedList<Integer>> outSousedi;
+    /** IN-sousedé vrcholu */
+    private final Map<Integer, LinkedList<Integer>> inSousedi;
 
-    /** Jestli byl vrchol navštíven při průchodu */
-    private Map<Integer, Boolean> visited;
-    /** Jestli byl vrchol přiřazen komponentě */
-    private Map<Integer, Boolean> assigned;
+    /** Navštívené vrcholy */
+    private Set<Integer> visited;
+    /** Vrcholy přiřazené nějaké komponentě */
+    private Set<Integer> assigned;
     /** V jakém pořadí se mají zpracovávat vrcholy */
     private Stack<Integer> traversal;
     /** Jednotlivé komponenty grafu spolu s jejich vrcholy */
@@ -21,7 +25,8 @@ public class Graf {
      * Konstruktor, inicializuje seznam sousednosti
      */
     public Graf() {
-        seznamSousednosti = new HashMap<>();
+        outSousedi = new HashMap<>();
+        inSousedi = new HashMap<>();
     }
 
     /**
@@ -29,7 +34,8 @@ public class Graf {
      * @param id cislo vrcholu
      */
     public void pridejVrchol(int id){
-        seznamSousednosti.putIfAbsent(id, new LinkedList<>());
+        outSousedi.putIfAbsent(id, new LinkedList<>());
+        inSousedi.putIfAbsent(id, new LinkedList<>());
     }
 
     /**
@@ -38,7 +44,8 @@ public class Graf {
      * @param konec koncový vrchol
      */
     public void pridejHranu(int zacatek, int konec){
-        seznamSousednosti.get(zacatek).add(konec);
+        outSousedi.get(zacatek).add(konec);
+        inSousedi.get(konec).add(zacatek);
     }
 
     /**
@@ -51,17 +58,13 @@ public class Graf {
      */
     public void stronglyConnectedComponents() {
         // For each vertex u of the graph, mark u as unvisited. Let L be empty
-        visited = new HashMap<>();
-        assigned = new HashMap<>();
+        visited = new HashSet<>();
+        assigned = new HashSet<>();
         traversal = new Stack<>();
         komponenty = new HashMap<>();
-        for (Map.Entry<Integer, LinkedList<Integer>> entry : seznamSousednosti.entrySet()) {
-            visited.put(entry.getKey(), Boolean.FALSE);
-            assigned.put(entry.getKey(), Boolean.FALSE);
-        }
 
         // For each vertex u of the graph do Visit(u)
-        for (Map.Entry<Integer, LinkedList<Integer>> entry : seznamSousednosti.entrySet()) {
+        for (Map.Entry<Integer, LinkedList<Integer>> entry : outSousedi.entrySet()) {
             visit(entry.getKey());
         }
 
@@ -75,19 +78,37 @@ public class Graf {
     /**
      * Vypíše graf do konzole
      * <p>
-     * Formát výpisu: 'výchozí vrchol' -> 'vrchol kam vede hrana' -> 'vrchol kam vede hrana' -> ...
+     * Formát výpisu: 'výchozí vrchol' -> 'koncový vrchol' -> 'koncový vrchol' -> ...
      */
-    public void vypisGraf() {
-        for (Map.Entry<Integer, LinkedList<Integer>> id : seznamSousednosti.entrySet()) {
+    public void vypisOutSousedy() {
+        for (Map.Entry<Integer, LinkedList<Integer>> id : outSousedi.entrySet()) {
             System.out.println("Vrchol (" + id.getKey() + "):");
 
-            System.out.print(id.getKey());
-            for (Integer id2 : seznamSousednosti.get(id.getKey())) {
+            System.out.print("\t" + id.getKey());
+            for (Integer id2 : outSousedi.get(id.getKey())) {
                 System.out.print(" -> " + id2);
             }
             System.out.println();
         }
     }
+
+    /**
+     * Vypíše graf do konzole
+     * <p>
+     * Formát výpisu: 'koncový vrchol' <- 'výchozí vrchol' <- 'výchozí vrchol' <- ...
+     */
+    public void vypisInSousedy() {
+        for (Map.Entry<Integer, LinkedList<Integer>> id : inSousedi.entrySet()) {
+            System.out.println("Vrchol (" + id.getKey() + "):");
+
+            System.out.print("\t" + id.getKey());
+            for (Integer id2 : inSousedi.get(id.getKey())) {
+                System.out.print(" <- " + id2);
+            }
+            System.out.println();
+        }
+    }
+
 
     /**
      * Vypíše všechny komponenty grafu a ze kterých vrcholů se skládají
@@ -115,12 +136,12 @@ public class Graf {
      */
     private void visit(int vrchol){
         // If u is unvisited then
-        if (visited.get(vrchol) == Boolean.FALSE) {
+        if (!visited.contains(vrchol)) {
             // Mark u as visited
-            visited.put(vrchol, Boolean.TRUE);
+            visited.add(vrchol);
 
             // For each out-neighbour v of u do Visit(v)
-            for(Integer outNeighbour : seznamSousednosti.get(vrchol)){
+            for(Integer outNeighbour : outSousedi.get(vrchol)){
                 visit(outNeighbour);
             }
 
@@ -136,19 +157,15 @@ public class Graf {
      */
     private void assign(int vrchol, int root){
         // If u has not been assigned to a component then
-        if (assigned.get(vrchol) == Boolean.FALSE) {
+        if (!assigned.contains(vrchol)) {
             // Assign u as belonging to the component whose root is root
-            assigned.put(vrchol, Boolean.TRUE);
+            assigned.add(vrchol);
             komponenty.putIfAbsent(root, new LinkedList<>());
             komponenty.get(root).push(vrchol);
 
             // For each in-neighbour v of u, do Assign(v,root)
-            for (Map.Entry<Integer, LinkedList<Integer>> entry : seznamSousednosti.entrySet()) {
-                for(Integer inNeighbour : entry.getValue()){
-                    if(inNeighbour == vrchol) {
-                        assign(entry.getKey(), root);
-                    }
-                }
+            for(Integer inNeighbour : inSousedi.get(vrchol)){
+                assign(inNeighbour, root);
             }
         }
     }
