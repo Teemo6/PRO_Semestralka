@@ -35,6 +35,7 @@ public class Main {
 
         // Vstup uživatele
         if(args.length > 2){
+            System.out.println();
             System.out.println("Spusteni programu s parametry:");
             System.out.println("program.jar <pocet vrcholu> <pocet hran>");
             System.exit(-1);
@@ -44,14 +45,17 @@ public class Main {
                 pocetVrcholu = Integer.parseInt(args[0]);
                 pocetHran = Integer.parseInt(args[1]);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println();
                 System.out.println("Spusteni programu s parametry:");
                 System.out.println("program.jar <pocet vrcholu> <pocet hran>");
                 System.exit(-1);
             }
         }
         if(pocetVrcholu <= 1 || pocetHran <= 0){
-            System.out.println("Neplatný vstup");
+            System.out.println();
+            System.out.println("Neplatny vstup");
+            System.out.println("Spusteni programu s parametry:");
+            System.out.println("program.jar <pocet vrcholu> <pocet hran>");
             System.exit(-1);
         }
 
