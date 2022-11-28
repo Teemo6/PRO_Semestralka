@@ -50,7 +50,7 @@ public class Main {
                 System.exit(-1);
             }
         }
-        if(pocetVrcholu <= 0 || pocetHran <= 0){
+        if(pocetVrcholu <= 1 || pocetHran <= 0){
             System.out.println("Neplatný vstup");
             System.exit(-1);
         }
