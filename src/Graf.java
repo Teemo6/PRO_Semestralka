@@ -17,7 +17,7 @@ public class Graf {
     /** Vrcholy přiřazené nějaké komponentě */
     private Set<Integer> assigned;
     /** V jakém pořadí se mají zpracovávat vrcholy */
-    private Stack<Integer> traversal;
+    private LinkedList<Integer> traversal;
     /** Jednotlivé komponenty grafu spolu s jejich vrcholy */
     private Map<Integer, LinkedList<Integer>> komponenty;
 
@@ -60,7 +60,7 @@ public class Graf {
         // For each vertex u of the graph, mark u as unvisited. Let L be empty
         visited = new HashSet<>();
         assigned = new HashSet<>();
-        traversal = new Stack<>();
+        traversal = new LinkedList<>();
         komponenty = new HashMap<>();
 
         // For each vertex u of the graph do Visit(u)
@@ -69,7 +69,6 @@ public class Graf {
         }
 
         // For each element u of L in order, do Assign(u,u)
-        Collections.reverse(traversal);
         for (int vrchol : traversal) {
             assign(vrchol, vrchol);
         }

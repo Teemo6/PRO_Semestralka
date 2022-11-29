@@ -4,8 +4,7 @@ import org.jgrapht.alg.interfaces.StrongConnectivityAlgorithm;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Hlavní třída, umí spustit program
@@ -20,9 +19,9 @@ public class Main {
     private static final Random random = new Random();
 
     /** Kolik má mít graf vrcholů */
-    private static final int POCET_VRCHOLU = 10;
+    private static final int POCET_VRCHOLU = 50;
     /** Kolik má mít graf hran */
-    private static final int POCET_HRAN = 20;
+    private static final int POCET_HRAN = 100;
 
     /**
      * Vytvoří dva identické, náhodně generované orientované grafy různých implementací a změří jejich čas hledání komponent
@@ -72,28 +71,28 @@ public class Main {
         // Měření času algoritmů
         System.out.println("Hledám komponenty grafu");
         long casSpusteni, casMuj, casKnihovny;
-        casSpusteni = System.currentTimeMillis();
-        List<Graph<Integer, DefaultEdge>> komponentyKnihovna = inspector.getStronglyConnectedComponents();
-        casKnihovny = System.currentTimeMillis() - casSpusteni;
+        casSpusteni = System.nanoTime();
+        List<Set<Integer>> neco = inspector.stronglyConnectedSets();
+        casKnihovny = System.nanoTime() - casSpusteni;
 
-        casSpusteni = System.currentTimeMillis();
+        casSpusteni = System.nanoTime();
         grafMuj.stronglyConnectedComponents();
-        casMuj = System.currentTimeMillis() - casSpusteni;
+        casMuj = (System.nanoTime() - casSpusteni);
 
         // Výpis komponent
         System.out.println("Výpis komponent vlastní implementace:");
         grafMuj.vypisKomponenty();
         System.out.println();
         System.out.println("Výpis komponent knihovny:");
-        for (Graph<Integer, DefaultEdge> komponenta : komponentyKnihovna) {
+        for (Set<Integer> komponenta : neco) {
             System.out.println(komponenta);
         }
         System.out.println();
         System.out.println();
 
         // Výpis času
-        System.out.println("Čas vlastní implementace: " + casMuj + " ms.");
-        System.out.println("Čas knihovny: " + casKnihovny + " ms.");
+        System.out.println("Čas vlastní implementace: " + casMuj / 1000000.0 + " ms.");
+        System.out.println("Čas knihovny: " + casKnihovny / 1000000.0 + " ms.");
     }
 
     /**
